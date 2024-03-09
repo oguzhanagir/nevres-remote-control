@@ -30,7 +30,6 @@ class Robotaksi:
             time.sleep(1)
             arduino.rightTurnMax()
             arduino.sendData()
-            
     
     def leftForced(self):
         if distanceLabel < 3 :
@@ -38,8 +37,7 @@ class Robotaksi:
             arduino.sendData()
             time.sleep(1)
             arduino.leftTurnMax()
-            arduino.sendData()
-       
+            arduino.sendData()    
 
     def leftSignal(self):
         while self.leftSignalStatus:
@@ -86,8 +84,6 @@ class Robotaksi:
         arduino.sendData()
 
     def move(self):
-        
-
         if subscriber.sagLane < 182:
             arduino.steeringAngle(135)
             arduino.sendData()
@@ -141,8 +137,6 @@ class Robotaksi:
             arduino.rightTurnMax()
             arduino.sendData()
 
-
-
     
 robotaksi = Robotaksi()
 
@@ -160,68 +154,56 @@ label_actions = {
     14: robotaksi.leftForced,
     17: robotaksi.move,
 
-}
 
+}
 while True:
-    distance = subscriber.obstancle
+    distance = subscriber.obstancle 
     imuValue = subscriber.imuDegree
     label_array = subscriber.indexLabel
     distanceLabel = subscriber.plateDistance
   
-    # if distance < 7 and distance > 0.0:
-    #     robotaksi.escapeObstancle(imuValue)
-    # else:
-    if label_array == 8:
-        if distanceLabel < 5:
-            robotaksi.stop()
-    elif label_array == 17:
-        robotaksi.move()
-    elif label_array == 9:
-        robotaksi.station()
-    robotaksi.move()
-    arduino.sendData()
-    # else:
-    #     robotaksi.move()
-    #     arduino.sendData()
-    # else:
-    #     arduino.move()
-    #     arduino.sendData()
-        # if len(label_array) == 2:  # İki Tabela Algılandıysa
-        #     if set(label_array) == {5, 11}:  
-        #         robotaksi.leftForced()
+    if 0.0 < distance < 7:  
+        robotaksi.escapeObstancle(imuValue)  
+    else:
+        if label_array == 8:
+            if distanceLabel < 5:
+                robotaksi.stop()
+        elif label_array == 17:
+            robotaksi.move()
+        elif label_array == 9:
+            robotaksi.station()
+        else:
+            robotaksi.move()  
+            arduino.sendData()
 
-        #     elif set(label_array) == {5, 12}:  
-        #         robotaksi.rightForced()
-
-        #     elif set(label_array) == {5, 13}:  
-        #         robotaksi.rightForced()
-            
-        #     elif set(label_array) == {5, 14}:  
-        #         robotaksi.leftForced()
-
-        #     elif set(label_array) == {11, 13}:  
-        #         robotaksi.straight()
-
-        #     elif set(label_array) == {15, 12}:  
-        #         robotaksi.rightForced()
-
-        #     elif set(label_array) == {15, 13}:  
-        #         robotaksi.rightForced()
-            
-        #     elif set(label_array) == {15, 14}:  
-        #         robotaksi.leftForced()
-
-        # elif len(label_array) == 3: # Üç Tabela Algılandıysa
-        #     pass
-
-        # elif len(label_array) == 1: # Bir Tabela Algılandıysa
-        #     label_index = label_array[0]
-        #     for i, distanceL in enumerate(distanceLabel):
-        #         if i == label_index and label_index in label_actions:
-        #             if distanceL < 6:
-        #                 label_actions[label_index](imuValue)
-        #             else:
-        #                 robotaksi.move()
-        #         else:
-        #             robotaksi.move()
-     
+            if len(label_array) == 2:  # İki Tabela Algılandıysa
+                if set(label_array) == {5, 11}:  
+                    robotaksi.leftForced()
+                elif set(label_array) == {5, 12}:  
+                    robotaksi.rightForced()
+                elif set(label_array) == {5, 13}:  
+                    robotaksi.rightForced()
+                elif set(label_array) == {5, 14}:  
+                    robotaksi.leftForced()
+                elif set(label_array) == {11, 13}:  
+                    robotaksi.straight()
+                elif set(label_array) == {15, 12}:  
+                    robotaksi.rightForced()
+                elif set(label_array) == {15, 13}:  
+                    robotaksi.rightForced()
+                elif set(label_array) == {15, 14}:  
+                    robotaksi.leftForced()
+            elif len(label_array) == 3:  # Üç Tabela Algılandıysa
+                pass
+            elif len(label_array) == 1:  # Bir Tabela Algılandıysa
+                label_index = label_array[0]
+                for i, distanceL in enumerate(distanceLabel):
+                    label_actions = {5: robotaksi.leftForced, 11: robotaksi.straight, 12: robotaksi.rightForced,
+                                     13: robotaksi.rightForced, 14: robotaksi.leftForced}
+                    if i == label_index and label_index in label_actions:
+                        if distanceL < 6:
+                            label_actions[label_index](imuValue)
+                        else:
+                            robotaksi.move()
+                    else:
+                        robotaksi.move()

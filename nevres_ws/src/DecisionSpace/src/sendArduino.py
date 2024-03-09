@@ -52,4 +52,6 @@ class Arduino:
     def straight(self):
         self.data[3] = 125
         
-        
+    def emergencyStop(self):
+        ##Burada acil stop çalıştırılacak
+        return 0
